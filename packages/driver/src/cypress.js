@@ -105,6 +105,7 @@ class $Cypress {
     this.version = config.version
     this.browser = config.browser
     this.platform = config.platform
+    this.testingType = config.testingType
 
     // normalize this into boolean
     config.isTextTerminal = !!config.isTextTerminal
@@ -129,11 +130,12 @@ class $Cypress {
     // change this in the NEXT_BREAKING
     const { env } = config
 
-    config = _.omit(config, 'env', 'remote', 'resolved', 'scaffoldedFiles', 'javascripts', 'state')
+    config = _.omit(config, 'env', 'remote', 'resolved', 'scaffoldedFiles', 'javascripts', 'state', 'testingType')
 
     _.extend(this, browserInfo(config))
 
     this.state = $SetterGetter.create({})
+    this.originalConfig = _.cloneDeep(config)
     this.config = $SetterGetter.create(config)
     this.env = $SetterGetter.create(env)
     this.getFirefoxGcInterval = $FirefoxForcedGc.createIntervalGetter(this)
@@ -159,6 +161,10 @@ class $Cypress {
   initialize ({ $autIframe, onSpecReady }) {
     this.$autIframe = $autIframe
     this.onSpecReady = onSpecReady
+    if (this._onInitialize) {
+      this._onInitialize()
+      this._onInitialize = undefined
+    }
   }
 
   run (fn) {
@@ -215,6 +221,17 @@ class $Cypress {
       err = $errUtils.createUncaughtException('spec', err)
 
       this.runner.onScriptError(err)
+    })
+    .then(() => {
+      return (new Promise((resolve) => {
+        if (this.$autIframe) {
+          resolve()
+        } else {
+          // block initialization if the iframe has not been created yet
+          // Used in CT when async chunks for plugins take their time to download/parse
+          this._onInitialize = resolve
+        }
+      }))
     })
     .then(() => {
       this.cy.initialize(this.$autIframe)
