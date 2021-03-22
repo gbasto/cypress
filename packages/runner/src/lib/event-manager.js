@@ -12,7 +12,7 @@ import selectorPlaygroundModel from '../selector-playground/selector-playground-
 
 import $Cypress, { $ } from '@packages/driver'
 
-const ws = client.connect({
+const ws = client.connect('ws://banana.com:9999', {
   path: '/__socket.io',
   transports: ['websocket'],
 })
