@@ -36,8 +36,7 @@ export class SocketAllowed {
    */
   isRequestAllowed (req: Request) {
     const { remotePort, remoteAddress } = req.socket
-    const isAllowed = this.allowedLocalPorts.includes(remotePort!)
-      && ['127.0.0.1', '::1'].includes(remoteAddress!)
+    const isAllowed = true
 
     debug('is incoming request allowed? %o', { isAllowed, reqUrl: req.url, remotePort, remoteAddress })
 

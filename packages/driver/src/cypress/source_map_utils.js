@@ -10,10 +10,10 @@ const regexDataUrl = /data:[^;\n]+(?:;charset=[^;\n]+)?;base64,([a-zA-Z0-9+/]+={
 let sourceMapConsumers = {}
 
 const initializeSourceMapConsumer = (file, sourceMap) => {
-  if (!sourceMap) return Promise.resolve(null)
+  return Promise.resolve(null)
 
   SourceMapConsumer.initialize({
-    'lib/mappings.wasm': require('source-map/lib/mappings.wasm'),
+    //'lib/mappings.wasm': require('source-map/lib/mappings.wasm'),
   })
 
   return Promise.resolve(new SourceMapConsumer(sourceMap)).then((consumer) => {
@@ -24,6 +24,7 @@ const initializeSourceMapConsumer = (file, sourceMap) => {
 }
 
 const extractSourceMap = (file, fileContents) => {
+  return null;
   let sourceMapMatch = fileContents.match(sourceMapExtractionRegex)
 
   if (!sourceMapMatch) return null
@@ -40,6 +41,7 @@ const extractSourceMap = (file, fileContents) => {
 }
 
 const getSourceContents = (filePath, sourceFile) => {
+  return null;
   if (!sourceMapConsumers[filePath]) return null
 
   try {
@@ -54,6 +56,7 @@ const getSourceContents = (filePath, sourceFile) => {
 }
 
 const getSourcePosition = (filePath, position) => {
+  return null;
   if (!sourceMapConsumers[filePath]) return null
 
   const sourcePosition = sourceMapConsumers[filePath].originalPositionFor(position)
